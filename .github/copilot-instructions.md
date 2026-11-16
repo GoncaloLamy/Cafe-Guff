@@ -1,0 +1,1 @@
+Read and follow AFENTS.md in the project root.
