@@ -20,9 +20,9 @@ If lint fails, fix the code. Never use `eslint-disable`. If a lint rule does not
 
 CommonJS only. Server on port 3000. Each layer only knows the one below it.
 
-1. `src/server.js` connects to the database and starts the server. `src/app.js` has `createApp()` and registers the routers. Only these two files wire things together.
-2. Middleware order in `createApp`: `logger`, `express.json()`, `express.static` for `public/`, routers, `notFound`, then `errorHandler`.
-3. `routers` map URLs to controller functions. `controllers` handle `req` and `res`, validate input and choose status codes. `services` have the rules. `models` are the Mongoose schemas.
+1. `src/server.js` connects to the database and starts the server. `src/app.js` has `createApp()` and registers the routes. Only these two files wire things together.
+2. Middleware order in `createApp`: `logger`, `express.json()`, `express.static` for `public/`, routes, `notFound`, then `errorHandler`.
+3. `routes` map URLs to controller functions. `controllers` handle `req` and `res`, validate input and choose status codes. `services` have the rules. `models` are the Mongoose schemas.
 4. Dependencies come in as parameters. Use `path.join(__dirname, ...)` for paths. Tests pass in fakes (fx a fake `fetch` for the weather API) instead of mocking modules.
 5. The database address comes from `MONGODB_URI`. Tests must not need a running database.
 
