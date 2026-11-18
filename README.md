@@ -15,7 +15,7 @@ Teknologi: Node.js, Express 5, MongoDB med Mongoose, HTML og JavaScript til fron
 ## Mapper
 
     public       frontend
-    src          serverkoden (routers, controllers, services, models, middleware)
+    src          serverkoden (routes, controllers, services, models, middleware)
     test         tests med node:test
     postman      Postman samling
     docs         teknisk beskrivelse og billeder
