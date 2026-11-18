@@ -13,7 +13,7 @@ If lint fails, fix the code. Never use `eslint-disable`. If a lint rule does not
 
 1. Test first (TDD). Write a failing test that matches one acceptance criterion in the issue, then the code that makes it pass, then clean up.
 2. Make a short plan first and wait for our OK before you change code.
-3. Tests use `node:test` in the `test` folder, in the form Arrange, Act, Assert, named like `thing_scenario_expected`. Failure cases (400, 404) are tested as well as success cases.
+3. Tests use Vitest in the `test` folder, in the form Arrange, Act, Assert, named like `thing_scenario_expected`. Failure cases (400, 404) are tested as well as success cases.
 4. The acceptance criteria in the issue are the definition of done for the story.
 
 ## Structure
@@ -23,7 +23,7 @@ CommonJS only. Server on port 3000. Each layer only knows the one below it.
 1. `src/server.js` connects to the database and starts the server. `src/app.js` has `createApp()` and registers the routers. Only these two files wire things together.
 2. Middleware order in `createApp`: `logger`, `express.json()`, `express.static` for `public/`, routers, `notFound`, then `errorHandler`.
 3. `routers` map URLs to controller functions. `controllers` handle `req` and `res`, validate input and choose status codes. `services` have the rules. `models` are the Mongoose schemas.
-4. Dependencies come in as parameters. Use `path.join(__dirname, ...)` for paths.
+4. Dependencies come in as parameters. Use `path.join(__dirname, ...)` for paths. Tests pass in fakes (fx a fake `fetch` for the weather API) instead of mocking modules.
 5. The database address comes from `MONGODB_URI`. Tests must not need a running database.
 
 ## API
