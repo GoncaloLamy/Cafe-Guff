@@ -1,7 +1,7 @@
 {
-  "name": "cafe-guff",
+  "name": "cafe-guf",
   "version": "1.0.0",
-  "description": "colab",
+  "description": "Bestillingssystem til Café Guf (XP eksamensprojekt)",
   "main": "index.js",
   "directories": {
     "doc": "docs",
@@ -22,9 +22,9 @@
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/GoncaloLamy/Statlocker/issues"
+    "url": "https://github.com/GoncaloLamy/Cafe-Guff/issues"
   },
-  "homepage": "https://github.com/GoncaloLamy/Statlocker#readme",
+  "homepage": "https://github.com/GoncaloLamy/Cafe-Guff#readme",
   "dependencies": {
     "express": "^5.3.0"
   },
