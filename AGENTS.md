@@ -13,7 +13,7 @@ If lint fails, fix the code. Never use `eslint-disable`. If a lint rule does not
 
 1. Test first (TDD). Write a failing test that matches one acceptance criterion in the issue, then the code that makes it pass, then clean up.
 2. Make a short plan first and wait for our OK before you change code.
-3. Tests use Vitest in the `test` folder, in the form Arrange, Act, Assert, named like `thing_scenario_expected`. Failure cases (400, 404) are tested as well as success cases. Endpoint tests use supertest: `request(createApp())`, no `listen()` needed.
+3. Tests use Vitest in the `test` folder, in the form Arrange, Act, Assert, named like `thing_scenario_expected`. Failure cases (400, 404) are tested as well as success cases. Unit tests for services go in `test/unit` (with fakes). Endpoint tests go in `test/integration` and use supertest: `request(createApp())`, no `listen()` needed.
 4. The acceptance criteria in the issue are the definition of done for the story.
 
 ## Structure
