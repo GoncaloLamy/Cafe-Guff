@@ -2,7 +2,7 @@
 
 Bestillingssystem til en café i det centrale København. Tjenerne opretter bestillinger pr. bord, køkkenet ser dem og markerer dem klar, og ejeren styrer menu, kvitteringer og omsætning. Lavet med Extreme Programming til eksamensprojektet på 3. semester, Zealand Næstved.
 
-Teknologi: Node.js, Express 5, MongoDB med Mongoose, HTML og JavaScript til frontend, tests med `node:test` og Postman til API'et.
+Teknologi: Node.js, Express 5, MongoDB med Mongoose, HTML og JavaScript til frontend, tests med Vitest og supertest og Postman til API'et.
 
 ## Test
 
@@ -16,7 +16,7 @@ Teknologi: Node.js, Express 5, MongoDB med Mongoose, HTML og JavaScript til fron
 
     public       frontend
     src          serverkoden (routes, controllers, services, models, middleware)
-    test         tests med node:test
+    test         tests med Vitest og supertest
     postman      Postman samling
     docs         teknisk beskrivelse og billeder
 
