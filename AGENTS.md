@@ -46,3 +46,6 @@ Errors are `{ "error": "..." }` with a fixed text, never `err.message` or a stac
 4. If something looks wrong or there is a merge conflict, stop and tell us.
 5. Make a short plan first and wait for our OK before you change code.
 6. The README reflection answers are ours. Do not write them.
+7. Code uses ES modules: `import` and `export`, with file extension in imports (`./app.js`).
+8. Use supertest for endpoint tests: `request(createApp())`, no `listen()` needed.
+9. Never change dependencies or versions in package.json. If tests will not run in your environment, say so instead of fixing it.
