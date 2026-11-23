@@ -1,9 +1,6 @@
-const js = require('@eslint/js');
+﻿import js from '@eslint/js';
 
 const nodeGlobals = {
-    require: 'readonly',
-    module: 'writable',
-    __dirname: 'readonly',
     process: 'readonly',
     console: 'readonly',
     fetch: 'readonly',
@@ -21,10 +18,10 @@ const browserGlobals = {
     clearTimeout: 'readonly',
 };
 
-module.exports = [
+export default [
     js.configs.recommended,
     {
-        files: ['/*.js'],
+        files: ['**/*.js'],
         languageOptions: { ecmaVersion: 2022 },
         rules: {
             complexity: ['error', 6],
@@ -37,15 +34,15 @@ module.exports = [
         },
     },
     {
-        files: ['src//.js', 'tests/**/.js', 'eslint.config.js'],
-        languageOptions: { sourceType: 'commonjs', globals: nodeGlobals },
+        files: ['src/**/*.js', 'test/**/*.js', 'eslint.config.js'],
+        languageOptions: { sourceType: 'module', globals: nodeGlobals },
     },
     {
-        files: ['public//*.js'],
+        files: ['public/**/*.js'],
         languageOptions: { sourceType: 'script', globals: browserGlobals },
     },
     {
-        files: ['tests//*.js'],
-        rules: { 'max-lines': 'off' },
+        files: ['test/**/*.js'],
+        rules: { 'max-lines': 'off', 'max-lines-per-function': 'off' },
     },
 ];
