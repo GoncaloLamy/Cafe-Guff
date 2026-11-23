@@ -1,1 +1,25 @@
-// TODO: Story 2, 3, 4, 5, 6, 9, 10, 11, 14, 20, 21, 22
+import mongoose from 'mongoose';
+
+const orderSchema = new mongoose.Schema({
+    tableNumber: {
+        type: Number,
+        required: true,
+        min: 1,
+        validate: Number.isInteger,
+    },
+    dishIds: {
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'MenuItem',
+            required: true,
+        }],
+        required: true,
+        validate: {
+            validator: (dishIds) => dishIds.length > 0,
+            message: 'At least one dish is required',
+        },
+    },
+});
+
+export default mongoose.models.Order
+    || mongoose.model('Order', orderSchema);
