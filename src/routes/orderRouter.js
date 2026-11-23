@@ -1,1 +1,12 @@
-// TODO: Story 2, 3, 4, 5, 6, 9, 10, 11, 14, 20, 21, 22
+import express from 'express';
+import {
+    createOrder,
+    updateOrderItems,
+} from '../controllers/orderController.js';
+
+const orderRouter = express.Router();
+
+orderRouter.post('/', createOrder);
+orderRouter.patch('/:id', updateOrderItems);
+
+export default orderRouter;
