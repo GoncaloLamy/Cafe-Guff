@@ -18,12 +18,12 @@ describe('Bestilling', () => {
         const response = await request(app)
             .post('/api/orders')
             .send({
-                bordNummer: 5,
-                retter: [1, 2]
+                table: 5,
+                dishIds: [1, 2]
             });
 
         expect(response.status).toBe(201);
-        expect(response.body.bordNummer).toBe(5);
-        expect(response.body.retter).toHaveLength(2);
+        expect(response.body.table).toBe(5);
+        expect(response.body.dishIds).toHaveLength(2);
     });
 });
