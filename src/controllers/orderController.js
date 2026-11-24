@@ -24,5 +24,26 @@ export default function createOrderController(orderService) {
                 dishIds: order.dishIds,
             });
         },
+        update: async (req, res) => {
+            const { dishIds } = req.body ?? {};
+            if (!Array.isArray(dishIds) || dishIds.length === 0) {
+                return res.status(400).json({ error: 'Invalid order' });
+            }
+
+            const result = await orderService.updateOrder(req.params.id, dishIds);
+            if (result.error === 'order-not-found') {
+                return res.status(404).json({ error: 'Order not found' });
+            }
+            if (result.error === 'dish-not-found') {
+                return res.status(404).json({ error: 'Menu item not found' });
+            }
+
+            return res.status(200).json({
+                id: result.order.id,
+                table: result.order.tableNumber,
+                dishIds: result.order.dishIds,
+                total: result.order.total,
+            });
+        },
     };
 }

@@ -13,5 +13,16 @@ export default function createInMemoryOrderRepository() {
             orders.push(order);
             return order;
         },
+        findById: async (id) => orders.find((order) => order.id === String(id)) ?? null,
+        update: async (id, { dishIds, total }) => {
+            const order = orders.find((item) => item.id === String(id));
+            if (!order) {
+                return null;
+            }
+
+            order.dishIds = [...dishIds];
+            order.total = total;
+            return order;
+        },
     };
 }

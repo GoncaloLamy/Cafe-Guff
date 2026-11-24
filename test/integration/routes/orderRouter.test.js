@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { describe, it, expect } from 'vitest';
-import app from '../../../src/app.js';
+import app, { createApp } from '../../../src/app.js';
+
 
 describe('Bestilling', () => {
     // Acceptkriterie 1
@@ -25,5 +26,69 @@ describe('Bestilling', () => {
         expect(response.status).toBe(201);
         expect(response.body.table).toBe(5);
         expect(response.body.dishIds).toHaveLength(2);
+    });
+});
+
+describe('Story 14, remove dish from order', () => {
+    it('patchOrder_removeDish_returnsOrderWithoutDish', async () => {
+        // Arrange
+        const app = createApp();
+        const created = await request(app)
+            .post('/api/orders')
+            .send({ table: 1, dishIds: [1, 2] });
+
+        // Act
+        const response = await request(app)
+            .patch(`/api/orders/${created.body.id}`)
+            .send({ dishIds: [1] });
+
+        // Assert
+        expect(response.status).toBe(200);
+        expect(response.body.dishIds).toEqual(['1']);
+    });
+
+    it('patchOrder_removeDish_updatesTotalFromMenu', async () => {
+        // Arrange
+        const app = createApp();
+        const created = await request(app)
+            .post('/api/orders')
+            .send({ table: 2, dishIds: [1, 2] });
+
+        // Act
+        const response = await request(app)
+            .patch(`/api/orders/${created.body.id}`)
+            .send({ dishIds: [1] });
+
+        // Assert
+        expect(response.body.total).toBe(65);
+    });
+
+    it('patchOrder_invalidDishIds_returns400', async () => {
+        // Arrange
+        const app = createApp();
+        const created = await request(app)
+            .post('/api/orders')
+            .send({ table: 3, dishIds: [1, 2] });
+
+        // Act
+        const response = await request(app)
+            .patch(`/api/orders/${created.body.id}`)
+            .send({ dishIds: [] });
+
+        // Assert
+        expect(response.status).toBe(400);
+    });
+
+    it('patchOrder_unknownOrder_returns404', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .patch('/api/orders/999')
+            .send({ dishIds: [1] });
+
+        // Assert
+        expect(response.status).toBe(404);
     });
 });
