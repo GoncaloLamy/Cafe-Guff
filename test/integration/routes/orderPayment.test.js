@@ -25,47 +25,42 @@ describe('Story 13, order payment', () => {
 
         // Act
         const response = await request(app)
-            .patch('/api/orders/999/close');
+            .post('/api/orders/999/close');
 
         // Assert
-        expect(response.status).toBe(404)
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe('Order not found');
     });
 
     it('closeOrder_alreadyClosed_returns409', async () => {
         // Arrange
         const app = createApp();
-
         const created = await request(app)
-        .post('/api/orders')
-        .send({ table: 1, dishIds: [1, 2] });
-
-
+            .post('/api/orders')
+            .send({ table: 1, dishIds: [1, 2] });
         await request(app)
-        .patch(`/api/orders/${created.body.id}/close`);
+            .post(`/api/orders/${created.body.id}/close`);
 
         // Act
         const response = await request(app)
-        .patch(`/api/orders/${created.body.id}/close`);
+            .post(`/api/orders/${created.body.id}/close`);
 
         // Assert
         expect(response.status).toBe(409);
-
-
     });
 
     it('patchOrder_closedOrder_returns409', async () => {
         // Arrange
         const app = createApp();
         const created = await request(app)
-        .post('/api/orders')
-        .send({ table: 1, dishIds: [1, 2] });
-
+            .post('/api/orders')
+            .send({ table: 1, dishIds: [1, 2] });
         await request(app)
-        .patch(`/api/orders/${created.body.id}/close`);
+            .post(`/api/orders/${created.body.id}/close`);
 
         // Act
         const response = await request(app)
-            .patch (`/api/orders/${created.body.id}`)
+            .patch(`/api/orders/${created.body.id}`)
             .send({ dishIds: [1] });
 
         // Assert
@@ -78,14 +73,11 @@ describe('Story 13, order payment', () => {
 
         // Act
         const response = await request(app)
-        .post('/api/orders')
-        .send({
-            table: 1,
-            dishIds: [1, 2]
-        });
+            .post('/api/orders')
+            .send({ table: 1, dishIds: [1, 2] });
 
         // Assert
-        expect(response.status).toBe(201)
-        expect(response.body.isPaid).toBe(false)
+        expect(response.status).toBe(201);
+        expect(response.body.paid).toBe(false);
     });
 });
