@@ -91,4 +91,20 @@ describe('Story 14, remove dish from order', () => {
         // Assert
         expect(response.status).toBe(404);
     });
+
+    it('patchOrder_unknownDish_returns404', async () => {
+        // Arrange
+        const app = createApp();
+        const created = await request(app)
+            .post('/api/orders')
+            .send({ table: 4, dishIds: [1, 2] });
+
+        // Act
+        const response = await request(app)
+            .patch(`/api/orders/${created.body.id}`)
+            .send({ dishIds: [99] });
+
+        // Assert
+        expect(response.status).toBe(404);
+    });
 });
