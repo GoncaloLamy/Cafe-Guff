@@ -154,3 +154,84 @@ describe('Story 12, samlet prisangivelse', () => {
         expect(response.body.total).toBe(150);
     });
 });
+
+describe('Story 11, table number', () => {
+    it('createOrder_withTable_returnsOrderWithTable', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .post('/api/orders')
+            .send({ table: 5, dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(201);
+        expect(response.body.table).toBe(5);
+    });
+
+    it('createOrder_withoutTable_returns400', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .post('/api/orders')
+            .send({ dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(400);
+    });
+
+     it('createOrder_tableNegative_returns400', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .post('/api/orders')
+            .send({ table: -99, dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(400);
+    });
+
+    it('createOrder_tableZero_returns400', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .post('/api/orders')
+            .send({ table: 0, dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(400);
+    });
+
+    it('createOrder_withStringTable_returns400', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+        .post('/api/orders')
+        .send({ table: 'abc', dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(400);
+    });
+
+    it('createOrder_tableDecimal_returns400', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .post('/api/orders')
+            .send({ table: 1.5, dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(400);
+    });
+});
