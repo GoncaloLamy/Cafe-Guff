@@ -22,6 +22,7 @@ export default function createOrderController(orderService) {
                 id: order.id,
                 table: order.tableNumber,
                 dishIds: order.dishIds,
+                total: order.total,
             });
         },
         update: async (req, res) => {

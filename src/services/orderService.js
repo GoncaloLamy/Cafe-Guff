@@ -1,3 +1,11 @@
+async function calculateTotal(dishIds, menuRepository) {
+    const menuItems = await menuRepository.findAll();
+    return dishIds.reduce((sum, dishId) => {
+        const menuItem = menuItems.find((item) => String(item.id) === dishId);
+        return sum + menuItem.price;
+    }, 0);
+}
+
 export default function createOrderService(orderRepository, menuRepository) {
     return {
         createOrder: async (tableNumber, dishIds) => {
@@ -6,9 +14,12 @@ export default function createOrderService(orderRepository, menuRepository) {
                 return null;
             }
 
+            const total = await calculateTotal(validDishIds, menuRepository);
+
             return orderRepository.create({
                 tableNumber,
                 dishIds: validDishIds,
+                total,
             });
         },
         updateOrder: async (id, dishIds) => {
@@ -22,11 +33,7 @@ export default function createOrderService(orderRepository, menuRepository) {
                 return { error: 'dish-not-found' };
             }
 
-            const menuItems = await menuRepository.findAll();
-            const total = validDishIds.reduce((sum, dishId) => {
-                const menuItem = menuItems.find((item) => String(item.id) === dishId);
-                return sum + menuItem.price;
-            }, 0);
+            const total = await calculateTotal(validDishIds, menuRepository);
 
             const updatedOrder = await orderRepository.update(id, {
                 dishIds: validDishIds,

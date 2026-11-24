@@ -109,6 +109,52 @@ describe('Story 14, remove dish from order', () => {
     });
 });
 
+describe('Story 12, samlet prisangivelse', () => {
+    it('createOrder_withDishes_returnsTotalFromMenu', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .post('/api/orders')
+            .send({ table: 5, dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(201);
+        expect(response.body.total).toBe(150);
+    });
+
+    it('createOrder_sameDishTwice_returnsPriceForBoth', async () => {
+        // Arrange
+        const app = createApp();
+
+        // Act
+        const response = await request(app)
+            .post('/api/orders')
+            .send({ table: 5, dishIds: [1, 1] });
+
+        // Assert
+        expect(response.status).toBe(201);
+        expect(response.body.total).toBe(130);
+    });
+    it('patchOrder_addDish_updatesTotalFromMenu', async () => {
+        // Arrange
+        const app = createApp();
+        const created = await request(app)
+            .post('/api/orders')
+            .send({ table: 5, dishIds: [1] });
+
+        // Act
+        const response = await request(app)
+            .patch(`/api/orders/${created.body.id}`)
+            .send({ dishIds: [1, 2] });
+
+        // Assert
+        expect(response.status).toBe(200);
+        expect(response.body.total).toBe(150);
+    });
+});
+
 describe('Story 11, table number', () => {
     it('createOrder_withTable_returnsOrderWithTable', async () => {
         // Arrange
