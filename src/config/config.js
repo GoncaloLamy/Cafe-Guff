@@ -1,1 +1,1 @@
-// TODO: PORT and MONGODB_URI from environment variables
+export const port = process.env.PORT || 3000;

@@ -1,1 +1,3 @@
-// TODO: 404 with a fixed error text
+export default function notFound(req, res) {
+    res.status(404).json({ error: 'Not found' });
+}

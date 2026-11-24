@@ -1,1 +1,15 @@
-// TODO: Story 2, 3, 4, 5, 6, 9, 10, 11, 14, 20, 21, 22
+export default function createOrderService(orderRepository, menuRepository) {
+    return {
+        createOrder: async (tableNumber, dishIds) => {
+            const validDishIds = await menuRepository.filterValidIds(dishIds);
+            if (validDishIds.length !== dishIds.length) {
+                return null;
+            }
+
+            return orderRepository.create({
+                tableNumber,
+                dishIds: validDishIds,
+            });
+        },
+    };
+}

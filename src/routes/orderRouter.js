@@ -1,1 +1,7 @@
-// TODO: Story 2, 3, 4, 5, 6, 9, 10, 11, 14, 20, 21, 22
+import express from 'express';
+
+export default function createOrderRouter(controller) {
+    const router = express.Router();
+    router.post('/', controller.create);
+    return router;
+}
