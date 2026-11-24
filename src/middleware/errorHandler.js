@@ -1,1 +1,8 @@
-// TODO: 400 for invalid JSON, 500 with a fixed text, log the real error
+export default function errorHandler(error, req, res, next) {
+    console.error(error);
+    const status = error.status === 400 ? 400 : 500;
+    const message = status === 400
+        ? 'Invalid JSON'
+        : 'Internal server error';
+    res.status(status).json({ error: message });
+}

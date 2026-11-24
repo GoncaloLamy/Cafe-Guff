@@ -1,1 +1,15 @@
-// TODO: start the server on PORT from config
+import { createApp } from './app.js';
+import { port } from './config/config.js';
+import createInMemoryMenuRepository from './repositories/inMemoryMenuRepository.js';
+import createInMemoryOrderRepository from './repositories/inMemoryOrderRepository.js';
+
+function startServer() {
+    const app = createApp({
+        menuRepository: createInMemoryMenuRepository(),
+        orderRepository: createInMemoryOrderRepository(),
+    });
+
+    app.listen(port);
+}
+
+startServer();

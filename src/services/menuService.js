@@ -1,1 +1,5 @@
-// TODO: Story 1, 2, 19
+export default function createMenuService(menuRepository) {
+    return {
+        getMenu: async () => menuRepository.findAll(),
+    };
+}

@@ -1,1 +1,7 @@
-// TODO: Story 1, 2, 19
+import express from 'express';
+
+export default function createMenuRouter(controller) {
+    const router = express.Router();
+    router.get('/', controller.getMenu);
+    return router;
+}

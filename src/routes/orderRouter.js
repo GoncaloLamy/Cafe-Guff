@@ -1,12 +1,7 @@
 import express from 'express';
-import {
-    createOrder,
-    updateOrderItems,
-} from '../controllers/orderController.js';
 
-const orderRouter = express.Router();
-
-orderRouter.post('/', createOrder);
-orderRouter.patch('/:id', updateOrderItems);
-
-export default orderRouter;
+export default function createOrderRouter(controller) {
+    const router = express.Router();
+    router.post('/', controller.create);
+    return router;
+}
