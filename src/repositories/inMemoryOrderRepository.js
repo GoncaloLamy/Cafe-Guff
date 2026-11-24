@@ -10,6 +10,7 @@ export default function createInMemoryOrderRepository() {
                 dishIds: [...dishIds],
                 total,
                 createdAt,
+                paid: false,
             };
             nextId += 1;
             orders.push(order);
@@ -24,6 +25,15 @@ export default function createInMemoryOrderRepository() {
 
             order.dishIds = [...dishIds];
             order.total = total;
+            return order;
+        },
+        close: async (id) => {
+            const order = orders.find((item) => item.id === String(id));
+            if (!order) {
+                return null;
+            }
+
+            order.paid = true;
             return order;
         },
     };
