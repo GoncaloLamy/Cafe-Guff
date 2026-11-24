@@ -12,3 +12,11 @@
 - Senere: auth middleware (Story 18).
 
 **Kritisk vurdering:** Agenten behandlede ikke implementerede stories og kommende stories forskelligt, så over halvdelen af fundene var støj. Eksemplerne på requests er ikke afprøvet. Agenten fandt ikke de fund, vi selv fandt med en probe (413, grænser på table og dishIds, X-Powered-By).
+
+## 24/11 Postman collection lavet med Postman AI
+
+**Prompt:** Create a Postman collection named "Cafe Guf API" for a REST API running at http://localhost:3000 ... exactly these folders and requests, no others ... Tests script checks status code and fields ... (hele prompten ligger i bilag).
+
+**Resultat:** 5 mapper og 19 requests (Story 2 og 12, 11, 14, 20, 13). Alle 38 tests grønne i Collection Runner mod serveren.
+
+**Vurdering:** Vi tjekkede mapper, requests og statuskoder mod vores liste. Postman AI skrev i sin opsummering 18 requests, men der er 19, så opsummeringen var forkert, ikke samlingen. Fejl requests tjekker kun, at der er et error felt, ikke teksten.
