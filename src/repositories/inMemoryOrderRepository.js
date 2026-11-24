@@ -3,12 +3,13 @@ export default function createInMemoryOrderRepository() {
     let nextId = 1;
 
     return {
-        create: async ({ tableNumber, dishIds, total }) => {
+        create: async ({ tableNumber, dishIds, total, createdAt }) => {
             const order = {
                 id: String(nextId),
                 tableNumber,
                 dishIds: [...dishIds],
                 total,
+                createdAt,
             };
             nextId += 1;
             orders.push(order);

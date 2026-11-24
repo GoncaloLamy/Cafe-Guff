@@ -20,6 +20,7 @@ export default function createOrderService(orderRepository, menuRepository) {
                 tableNumber,
                 dishIds: validDishIds,
                 total,
+                createdAt: new Date().toISOString(),
             });
         },
         updateOrder: async (id, dishIds) => {

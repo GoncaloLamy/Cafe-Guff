@@ -5,6 +5,16 @@ function isValidOrderInput(tableNumber, dishIds) {
         && dishIds.length > 0;
 }
 
+function formatOrder(order) {
+    return {
+        id: order.id,
+        table: order.tableNumber,
+        dishIds: order.dishIds,
+        total: order.total,
+        createdAt: order.createdAt,
+    };
+}
+
 export default function createOrderController(orderService) {
     return {
         create: async (req, res) => {
@@ -18,12 +28,7 @@ export default function createOrderController(orderService) {
                 return res.status(404).json({ error: 'Menu item not found' });
             }
 
-            return res.status(201).json({
-                id: order.id,
-                table: order.tableNumber,
-                dishIds: order.dishIds,
-                total: order.total,
-            });
+            return res.status(201).json(formatOrder(order));
         },
         update: async (req, res) => {
             const { dishIds } = req.body ?? {};
@@ -39,12 +44,7 @@ export default function createOrderController(orderService) {
                 return res.status(404).json({ error: 'Menu item not found' });
             }
 
-            return res.status(200).json({
-                id: result.order.id,
-                table: result.order.tableNumber,
-                dishIds: result.order.dishIds,
-                total: result.order.total,
-            });
+            return res.status(200).json(formatOrder(result.order));
         },
     };
 }
