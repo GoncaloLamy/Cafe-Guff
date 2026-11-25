@@ -46,18 +46,33 @@ function getWindDirection(degrees) {
 }
 
 async function fetchWeatherData(latitude, longitude, fetchImplementation) {
-    const [weatherResponse, airQualityResponse] = await Promise.all([
+    const [weatherResult, airQualityResult] = await Promise.allSettled([
         fetchImplementation(buildWeatherUrl(latitude, longitude).toString()),
         fetchImplementation(buildAirQualityUrl(latitude, longitude).toString()),
     ]);
+    if (weatherResult.status === 'rejected') {
+        throw weatherResult.reason;
+    }
+
+    const weatherResponse = weatherResult.value;
     if (!weatherResponse.ok) {
         throw new Error(`Open-Meteo weather request failed with status ${weatherResponse.status}`);
     }
-    if (!airQualityResponse.ok) {
-        throw new Error(`Open-Meteo air quality request failed with status ${airQualityResponse.status}`);
+
+    let airQuality;
+    if (airQualityResult.status === 'fulfilled' && airQualityResult.value.ok) {
+        const [airQualityJsonResult] = await Promise.allSettled([
+            airQualityResult.value.json(),
+        ]);
+        if (airQualityJsonResult.status === 'fulfilled') {
+            airQuality = airQualityJsonResult.value;
+        }
     }
 
-    return Promise.all([weatherResponse.json(), airQualityResponse.json()]);
+    return {
+        forecast: await weatherResponse.json(),
+        airQuality,
+    };
 }
 
 function mapForecast(daily) {
@@ -76,7 +91,7 @@ function mapForecast(daily) {
 function mapWeatherData(forecast, airQuality) {
     const current = forecast.current;
     const daily = forecast.daily;
-    const airQualityIndex = airQuality.current?.us_aqi;
+    const airQualityIndex = airQuality?.current?.us_aqi;
     if (!current || !daily?.time) {
         throw new Error('Open-Meteo response has incomplete weather data');
     }
@@ -99,7 +114,7 @@ function mapWeatherData(forecast, airQuality) {
 export default function createWeatherService(fetchImplementation = globalThis.fetch) {
     return {
         getWeather: async ({ latitude, longitude }) => {
-            const [forecast, airQuality] = await fetchWeatherData(
+            const { forecast, airQuality } = await fetchWeatherData(
                 latitude,
                 longitude,
                 fetchImplementation,

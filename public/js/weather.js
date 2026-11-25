@@ -64,7 +64,7 @@ async function loadWeather() {
     setWeatherValue('rain', weather.rain);
     setWeatherValue('wind-direction', weather.winddirection);
     setWeatherValue('feels-like', weather.feelslike);
-    setWeatherValue('air-quality', weather.airquality);
+    setWeatherValue('air-quality', weather.airquality ?? 'Ikke tilgængelig');
     setWeatherValue('humidity', weather.humidity);
     renderForecast(weather.week);
 }

@@ -47,7 +47,7 @@ function renderCurrentWeather(current) {
 }
 
 async function loadCurrentWeather() {
-    const conditionElement = document.getElementById('weather-condition')
+    const conditionElement = document.getElementById('weather-condition');
     
     try {
         const response = await fetch('/api/weather');
