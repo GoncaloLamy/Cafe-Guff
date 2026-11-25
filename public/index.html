@@ -1,1 +1,25 @@
-<!-- TODO: semantic HTML, lang="da" -->
+<!doctype html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Café Guf</title>
+</head>
+<body>
+    <header>
+        <h1>Café Guf</h1>
+    </header>
+    <main>
+        <section aria-labelledby="weather-heading">
+            <h2 id="weather-heading">Vejret i København</h2>
+            <a id="weather-link" href="/weather" aria-label="Se detaljeret vejrudsigt">
+                <span id="weather-icon" aria-hidden="true">⛅</span>
+                <span id="weather-condition">Henter vejret...</span>
+                <span id="weather-temperature"></span>
+            </a>
+            <p id="weather-error" role="status" hidden></p>
+        </section>
+    </main>
+    <script src="/js/app.js" defer></script>
+</body>
+</html>

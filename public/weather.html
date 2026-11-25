@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weather forecast - Café Guf</title>
+</head>
+<body>
+    <header>
+        <a href="/">Tilbage til Café Guf</a>
+        <h1>Weather forecast</h1>
+    </header>
+    <main>
+        <section aria-labelledby="current-weather-heading">
+            <h2 id="current-weather-heading">Aktuelt vejr</h2>
+            <p>Vind: <span id="wind-speed">Indlæser...</span> m/s</p>
+            <p>Regn: <span id="rain">Indlæser...</span> mm</p>
+            <p>Vindretning: <span id="wind-direction">Indlæser...</span></p>
+            <p>Føles som: <span id="feels-like">Indlæser...</span> °C</p>
+            <p>Luftkvalitet (US AQI): <span id="air-quality">Indlæser...</span></p>
+            <p>Luftfugtighed: <span id="humidity">Indlæser...</span>%</p>
+        </section>
+        <section aria-labelledby="weekly-weather-heading">
+            <h2 id="weekly-weather-heading">Vejret for ugen</h2>
+            <ul id="weekly-forecast"></ul>
+        </section>
+        <p id="weather-error" role="alert" hidden></p>
+    </main>
+    <script type="module" src="/js/weather.js"></script>
+</body>
+</html>
