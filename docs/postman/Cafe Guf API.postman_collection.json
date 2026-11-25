@@ -1209,6 +1209,37 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "POST cant split order and bill more then once",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bills\": [[1], [2]]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders/2/split",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders",
+                "2",
+                "split"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }

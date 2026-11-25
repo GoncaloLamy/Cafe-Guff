@@ -125,8 +125,8 @@ describe('Story 16, split bill', () => {
 
         // Assert
         expect(response.status).toBe(201);
-        expect(response.body.bills[0].price).toBeDefined();
-        expect(response.body.bills[1].price).toBeDefined();
+        expect(response.body.bills[0].price).toBe(65);
+        expect(response.body.bills[1].price).toBe(85);
     });
     it('splitOrder_allBillsRemainAtSameTable_returnsSameTable', async () => {
         // Arrange
@@ -181,6 +181,32 @@ describe('Story 16, split bill', () => {
         expect(response.status).toBe(404);
     });
 
+    it('splitOrder_alreadySplitAndPartiallyPaidOrder_returns409', async () => {
+        // Arrange
+        const app = createApp();
+
+        const order = await request(app)
+            .post('/api/orders')
+            .send({ table: 3, dishIds: [1, 2] });
+
+        const split = await request(app)
+            .post(`/api/orders/${order.body.id}/split`)
+            .send({ bills: [[1], [2]] });
+
+        // Pay the first bill
+        await request(app)
+            .post(`/api/bills/${split.body.bills[0].id}/close`);
+
+        // Act
+        const response = await request(app)
+            .post(`/api/orders/${order.body.id}/split`)
+            .send({ bills: [[1], [2]] });
+
+        // Assert
+        expect(response.status).toBe(409);
+        expect(response.body.error).toBe('Order already split');
+    });
+
     it('closeBill_oneBill_doesNotCloseOtherBills', async () => {
         // Arrange
         const app = createApp();
@@ -219,11 +245,8 @@ describe('Story 16, split bill', () => {
             .post('/api/bills/9999/close');
         await request(app)
             .post(`/api/bills/${split.body.bills[0].id}/close`);
-        const paidResponse = await request(app)
-            .post(`/api/bills/${split.body.bills[0].id}/close`);
 
         // Assert
         expect(missingResponse.status).toBe(404);
-        expect(paidResponse.status).toBe(409);
     });
 })

@@ -1,3 +1,5 @@
+import { isValidBills } from '../middleware/validateOrderInput.js';
+
 function formatOrder(order) {
     return {
         id: order.id,
@@ -59,12 +61,6 @@ async function closeOrder(orderService, req, res) {
     return res.status(200).json(formatOrder(result.order));
 }
 
-function isValidBills(bills) {
-    return Array.isArray(bills)
-        && bills.length >= 2
-        && bills.every((bill) => Array.isArray(bill) && bill.length > 0);
-}
-
 async function splitOrder(billService, req, res) {
     const { bills } = req.body ?? {};
     if (!isValidBills(bills)) {
@@ -72,6 +68,9 @@ async function splitOrder(billService, req, res) {
     }
 
     const result = await billService.splitOrder(req.params.id, bills);
+    if (result.error === 'order-already-split') {
+        return res.status(409).json({ error: 'Order already split' });
+    }
     if (result.error === 'invalid-split') {
         return res.status(400).json({ error: 'Invalid bills' });
     }

@@ -29,6 +29,9 @@ async function splitOrder(orderRepository, menuRepository, id, bills) {
     if (result.error) {
         return result;
     }
+    if (result.order.bills?.length > 0) {
+        return { error: 'order-already-split' };
+    }
 
     if (!isCompleteSplit(result.order.dishIds, bills)) {
         return { error: 'invalid-split' };
