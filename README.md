@@ -4,6 +4,7 @@
 ![Express](https://img.shields.io/badge/Express_5-000000?logo=express&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Tests-Vitest-6E9F18?logo=vitest&logoColor=white)
 ![Postman](https://img.shields.io/badge/API-Postman-FF6C37?logo=postman&logoColor=white)
+![Check](https://github.com/GoncaloLamy/Cafe-Guff/actions/workflows/check.yml/badge.svg)
 
 Bestillingssystem til en café i det centrale København. Tjenerne opretter bestillinger pr. bord, retter dem, deler regningen op og lukker den. Systemet er lavet med Extreme Programming (XP) som eksamensprojekt på 3. semester, Datamatiker, Zealand Næstved.
 
@@ -43,10 +44,10 @@ npm run lint      # ESLint
 npm run check     # begge dele, skal være grøn før noget merges
 ```
 
-API'et kan også testes med Postman. Samlingen ligger i `docs/postman` og kan køres uden Postman, mens serveren kører i en anden terminal:
+API'et kan også testes med Postman. Samlingen ligger i `docs/postman`. Start serveren med `npm start` i én terminal, og kør samlingen i en anden:
 
 ```bash
-npx newman run "docs/postman/Cafe Guf API.postman_collection.json"
+npm run postman
 ```
 
 ## API i overblik
