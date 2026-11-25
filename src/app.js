@@ -31,6 +31,7 @@ export function createApp({
     app.use('/api/menu', createMenuRouter(createMenuController(menuService)));
     app.use('/api/orders', createOrderRouter(createOrderController(orderService)));
     app.use('/api/weather', createWeatherRouter(createWeatherController(weatherService)));
+    app.get('/weather', (req, res) => res.sendFile(path.join(import.meta.dirname, '..', 'public', 'weather.html')));
     app.use(notFound);
     app.use(errorHandler);
 
