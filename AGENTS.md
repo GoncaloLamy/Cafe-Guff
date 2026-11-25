@@ -1,6 +1,6 @@
 # Agent instructions: Cafe Guf ordering system
 
-Node.js and Express 5 app with a REST API, a MongoDB database (Mongoose) and a plain HTML frontend. It is an ordering system for a cafe: waiters create orders per table, the kitchen sees and marks them, and the owner manages the menu, receipts and revenue. The stories are the GitHub issues (Story 1 to 22) on the board Cafe Guf Kanban. Work in small steps, one issue at a time. We must be able to explain every line, so keep the code simple.
+Node.js and Express 5 app with a REST API and a plain HTML frontend. Data is kept in memory for now; MongoDB with Mongoose is planned in issue #49 (U3). It is an ordering system for a cafe: waiters create orders per table, the kitchen sees and marks them, and the owner manages the menu, receipts and revenue. The stories are the GitHub issues (Story 1 to 22) on the board Cafe Guf Kanban. Work in small steps, one issue at a time. We must be able to explain every line, so keep the code simple.
 
 ## Before you say done
 
@@ -22,15 +22,15 @@ If lint fails, fix the code. Never use `eslint-disable`. If a lint rule does not
 
 ES modules only: `import` and `export`, with file extension in imports (`./app.js`). Server on port 3000. Each layer only knows the one below it.
 
-1. `src/server.js` connects to the database and starts the server. `src/app.js` has `createApp()` and registers the routes. Only these two files wire things together.
+1. `src/server.js` creates the app with the in-memory repositories and starts the server. `src/app.js` has `createApp()` and registers the routes. Only these two files wire things together.
 2. Middleware order in `createApp`: `logger`, `express.json()`, `express.static` for `public/`, routes, `notFound`, then `errorHandler`.
-3. `routes` map URLs to controller functions. `controllers` handle `req` and `res`, validate input and choose status codes. `services` have the rules. `models` are the Mongoose schemas.
-4. Dependencies come in as parameters. Use `path.join(import.meta.dirname, ...)` for paths. Tests pass in fakes (fx a fake `fetch` for the weather API) instead of mocking modules.
-5. The database address comes from `MONGODB_URI`. Tests must not need a running database.
+3. `routes` map URLs to controller functions. `controllers` handle `req` and `res`, validate input and choose status codes. `services` have the rules. `repositories` hold the data (in memory for now). Files in `models/` are stubs until MongoDB is added (#49).
+4. Dependencies come in as parameters. Use `path.join(import.meta.dirname, ...)` for paths. Tests pass in fakes (fx a fake `fetch` for the weather API) instead of mocking modules. Use `createApp({ menuRepository, orderRepository, fetch })` when a test needs its own fakes.
+5. There is no database yet. When MongoDB is added (#49), the address comes from `MONGODB_URI`. Tests must not need a running database.
 
 ## API
 
-1. Status codes: 200 for reads, 201 for create, 204 with no body for delete, 400 for invalid input, 404 for unknown id or route, 500 for other errors.
+1. Status codes: 200 for reads, 201 for create, 204 with no body for delete, 400 for invalid input, 404 for unknown id or route, 409 when an order is already paid, 500 for other errors.
 2. Invalid JSON gives 400. Wrong types (fx a number where text is expected) must give 400, never crash. Trim text on the server.
 3. Errors are `{ "error": "..." }` with a fixed text, never `err.message` or a stack trace. Log the real error with `console.error` on the server. Error messages from the API are in English. Messages the frontend makes itself are in Danish.
 4. The endpoints themselves are decided by the issues. Do not add endpoints that no issue asks for.
