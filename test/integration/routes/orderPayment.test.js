@@ -208,12 +208,11 @@ describe('Story 16, split bill', () => {
         expect(response.status).toBe(409);
         expect(response.body.error).toBe('Order already split');
 
-        // The second bill must still be unpaid
-        const bills = await request(app)
-            .get(`/api/orders/${order.body.id}/bills`);
+        // The second bill must still be unpaid, so it can be paid now
+        const closeSecond = await request(app)
+            .post(`/api/bills/${secondBill.id}/close`);
 
-        const unpaid = bills.body.find((b) => b.id === secondBill.id);
-        expect(unpaid.paid).toBe(false);
+        expect(closeSecond.status).toBe(200);
     });
 
     it('closeBill_oneBill_doesNotCloseOtherBills', async () => {
