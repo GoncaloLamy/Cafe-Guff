@@ -14,17 +14,6 @@ function splitOrder(orders, id, bills, firstBillId) {
     return { bills: order.bills, nextBillId: firstBillId + bills.length };
 }
 
-function createOrder(id, { tableNumber, dishIds, total, createdAt }) {
-    return {
-        id: String(id),
-        tableNumber,
-        dishIds: [...dishIds],
-        total,
-        createdAt,
-        paid: false,
-    };
-}
-
 function findBill(orders, id) {
     return orders.flatMap((order) => order.bills ?? [])
         .find((bill) => bill.id === String(id)) ?? null;
@@ -37,6 +26,18 @@ function markBillPaid(orders, id) {
     }
     bill.paid = true;
     return bill;
+}
+
+function createOrder(id, { tableNumber, dishIds, notes, total, createdAt }) {
+    return {
+        id: String(id),
+        tableNumber,
+        dishIds: [...dishIds],
+        notes: [...notes],
+        total,
+        createdAt,
+        paid: false,
+    };
 }
 
 export default function createInMemoryOrderRepository() {
@@ -53,19 +54,23 @@ export default function createInMemoryOrderRepository() {
         },
         findById: async (id) => orders.find((order) => order.id === String(id)) ?? null,
         findBillById: async (id) => findBill(orders, id),
-        update: async (id, { dishIds, total }) => {
+        update: async (id, { dishIds, notes, total }) => {
             const order = orders.find((item) => item.id === String(id));
             if (!order) {
                 return null;
             }
 
             order.dishIds = [...dishIds];
+            order.notes = [...notes];
             order.total = total;
             return order;
         },
         close: async (id) => {
             const order = orders.find((item) => item.id === String(id));
-            if (!order) return null;
+            if (!order) {
+                return null;
+            }
+
             order.paid = true;
             return order;
         },
