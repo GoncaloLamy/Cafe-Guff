@@ -184,7 +184,7 @@ describe('Weather Frontend-testing', () => {
 
         const targetResponse = await request(testApp).get('/weather');
         expect(targetResponse.status).toBe(200);
-        expect(targetResponse.text).toContain('Vejr udsigt');
+        expect(targetResponse.text).toContain('Vejrudsigt');
     });
 
     it('giver 404 hvis en side ikke findes', async () => {
