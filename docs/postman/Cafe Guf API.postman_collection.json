@@ -933,119 +933,207 @@
       "name": "Story 6, notes",
       "item": [
         {
-          "name": "POST create order with note",
+          "name": "POST order with notes - 201 notes returned",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Notes are returned', function () {",
+                  "    pm.expect(pm.response.json().notes).to.eql(['No onions', 'Extra cheese']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"table\": 3,\r\n    \"dishIds\": [1, 2],\r\n    \"notes\": [\"No onions\", \"Extra cheese\"]\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
-            },
+            ],
             "url": {
-              "raw": "http://localhost:3000/api/orders",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/orders",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
                 "orders"
               ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST create order without note",
-          "request": {
-            "method": "POST",
-            "header": [],
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"table\": 3,\r\n    \"dishIds\": [1, 2],\r\n    \"notes\": [\"\", \"\"]\r\n}",
+              "raw": "{\n  \"table\": 3,\n  \"dishIds\": [\n    1,\n    2\n  ],\n  \"notes\": [\n    \"No onions\",\n    \"Extra cheese\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/orders/",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "orders",
-                ""
-              ]
             }
           },
           "response": []
         },
         {
-          "name": "PATCH updates notes in order",
+          "name": "POST order without notes - 201 notes empty",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Notes are empty', function () {",
+                  "    pm.expect(pm.response.json().notes).to.eql(['', '']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"table\": 3,\n  \"dishIds\": [\n    1,\n    2\n  ],\n  \"notes\": [\n    \"\",\n    \"\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH order notes - 200 notes updated",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.collectionVariables.get('baseUrl') + '/api/orders',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: { mode: 'raw', raw: JSON.stringify({ table: 3, dishIds: [1, 2] }) }",
+                  "}, function (err, res) {",
+                  "    pm.collectionVariables.set('orderId', res.json().id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Notes are updated', function () {",
+                  "    pm.expect(pm.response.json().notes).to.eql(['', 'Extra cheese']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"notes\": [\"\", \"Extra cheese\"]\r\n}",
+              "raw": "{\n  \"notes\": [\n    \"\",\n    \"Extra cheese\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/orders/5",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "orders",
-                "5"
-              ]
             }
           },
           "response": []
         },
         {
-          "name": "POST create order with wrong note lenght",
+          "name": "POST order with too many notes - 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"table\": 3,\r\n    \"dishIds\": [1, 2],\r\n    \"notes\": [\"No onions\", \"Extra cheese\", \"No pickles\"]\r\n}",
+              "raw": "{\n  \"table\": 3,\n  \"dishIds\": [\n    1,\n    2\n  ],\n  \"notes\": [\n    \"No onions\",\n    \"Extra cheese\",\n    \"No pickles\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/orders",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "orders"
-              ]
             }
           },
           "response": []
@@ -1056,123 +1144,238 @@
       "name": "Story 16, split bill",
       "item": [
         {
-          "name": "POST split order into seperate bills and returns same table number",
+          "name": "POST split order - 201 two bills same table",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.collectionVariables.get('baseUrl') + '/api/orders',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: { mode: 'raw', raw: JSON.stringify({ table: 3, dishIds: [1, 2] }) }",
+                  "}, function (err, res) {",
+                  "    pm.collectionVariables.set('splitOrderId', res.json().id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Two bills at same table with correct prices', function () {",
+                  "    var bills = pm.response.json().bills;",
+                  "    pm.expect(bills).to.have.length(2);",
+                  "    pm.expect(bills[0].table).to.eql(3);",
+                  "    pm.expect(bills[1].table).to.eql(3);",
+                  "    pm.expect(bills[0].price).to.eql(65);",
+                  "    pm.expect(bills[1].price).to.eql(85);",
+                  "    pm.collectionVariables.set('billId', bills[0].id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{splitOrderId}}/split",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{splitOrderId}}",
+                "split"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"bills\": [\r\n        [1],\r\n        [2]\r\n    ]\r\n}",
+              "raw": "{\n  \"bills\": [\n    [\n      1\n    ],\n    [\n      2\n    ]\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/orders/1/split",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "orders",
-                "1",
-                "split"
-              ]
             }
           },
           "response": []
         },
         {
-          "name": "POST dish doesnt belong in order",
+          "name": "POST split order with dish not in order - 400",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.collectionVariables.get('baseUrl') + '/api/orders',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: { mode: 'raw', raw: JSON.stringify({ table: 3, dishIds: [1, 2] }) }",
+                  "}, function (err, res) {",
+                  "    pm.collectionVariables.set('freshOrderId', res.json().id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{freshOrderId}}/split",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{freshOrderId}}",
+                "split"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"bills\": [\r\n        [1],\r\n        [2, 99]\r\n    ]\r\n}",
+              "raw": "{\n  \"bills\": [\n    [\n      1\n    ],\n    [\n      2,\n      99\n    ]\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/orders/1/split",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "orders",
-                "1",
-                "split"
-              ]
             }
           },
           "response": []
         },
         {
-          "name": "POST empty bills",
+          "name": "POST split order with empty bills - 400",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.collectionVariables.get('baseUrl') + '/api/orders',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: { mode: 'raw', raw: JSON.stringify({ table: 3, dishIds: [1, 2] }) }",
+                  "}, function (err, res) {",
+                  "    pm.collectionVariables.set('freshOrderId', res.json().id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{freshOrderId}}/split",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{freshOrderId}}",
+                "split"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"bills\": []\r\n}",
+              "raw": "{\n  \"bills\": []\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/orders/1/split",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "orders",
-                "1",
-                "split"
-              ]
             }
           },
           "response": []
         },
         {
-          "name": "POST pay bill",
+          "name": "POST pay bill - 200 paid true",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Bill is paid', function () {",
+                  "    pm.expect(pm.response.json().paid).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"paid\": true\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
-            },
+            ],
             "url": {
-              "raw": "http://localhost:3000/api/bills/1/close",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/bills/{{billId}}/close",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
                 "bills",
-                "1",
+                "{{billId}}",
                 "close"
               ]
             }
@@ -1180,30 +1383,37 @@
           "response": []
         },
         {
-          "name": "POST cant pay same bill twice",
+          "name": "POST pay same bill twice - 409",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"paid\": true\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
-            },
+            ],
             "url": {
-              "raw": "http://localhost:3000/api/bills/1/close",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/bills/{{billId}}/close",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
                 "bills",
-                "1",
+                "{{billId}}",
                 "close"
               ]
             }
@@ -1211,32 +1421,86 @@
           "response": []
         },
         {
-          "name": "POST cant split order and bill more then once",
+          "name": "POST pay unknown bill - 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bills/9999/close",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bills",
+                "9999",
+                "close"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST split already split order - 409",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{splitOrderId}}/split",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{splitOrderId}}",
+                "split"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"bills\": [[1], [2]]\r\n}\r\n",
+              "raw": "{\n  \"bills\": [\n    [\n      1\n    ],\n    [\n      2\n    ]\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/orders/2/split",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "orders",
-                "2",
-                "split"
-              ]
             }
           },
           "response": []
@@ -1290,6 +1554,18 @@
     },
     {
       "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "splitOrderId",
+      "value": ""
+    },
+    {
+      "key": "freshOrderId",
+      "value": ""
+    },
+    {
+      "key": "billId",
       "value": ""
     }
   ]
