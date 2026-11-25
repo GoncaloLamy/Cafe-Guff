@@ -2,6 +2,12 @@ function isValidDishIds(dishIds) {
     return Array.isArray(dishIds) && dishIds.length > 0;
 }
 
+export function isValidBills(bills) {
+    return Array.isArray(bills)
+        && bills.length >= 2
+        && bills.every((bill) => Array.isArray(bill) && bill.length > 0);
+}
+
 function isValidNotes(notes) {
     return Array.isArray(notes)
         && notes.every((note) => typeof note === 'string');
