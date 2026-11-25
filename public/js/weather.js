@@ -45,7 +45,17 @@ async function loadWeather() {
 
         weather = await response.json();
     } catch {
-        errorMessage.textContent = 'Vejret kunne ikke hentes. Prøv igen senere.';
+        for (const id of [
+            'wind-speed',
+            'rain',
+            'wind-direction',
+            'feels-like',
+            'air-quality',
+            'humidity',
+        ]) {
+            setWeatherValue(id, 'Ikke tilgængelig');
+        }
+        errorMessage.textContent = 'Vejrdata er ikke tilgængelige lige nu.';
         errorMessage.hidden = false;
         return;
     }

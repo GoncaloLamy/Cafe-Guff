@@ -77,7 +77,7 @@ function mapWeatherData(forecast, airQuality) {
     const current = forecast.current;
     const daily = forecast.daily;
     const airQualityIndex = airQuality.current?.us_aqi;
-    if (!current || !daily?.time || !Number.isFinite(airQualityIndex)) {
+    if (!current || !daily?.time) {
         throw new Error('Open-Meteo response has incomplete weather data');
     }
 

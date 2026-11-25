@@ -184,7 +184,7 @@ describe('Weather Frontend-testing', () => {
 
         const targetResponse = await request(testApp).get('/weather');
         expect(targetResponse.status).toBe(200);
-        expect(targetResponse.text).toContain('Weather forecast');
+        expect(targetResponse.text).toContain('Vejr udsigt');
     });
 
     it('giver 404 hvis en side ikke findes', async () => {
@@ -227,4 +227,68 @@ describe('Weather Frontend-testing', () => {
         expect(body.airquality).toBe(25);
         expect(body.humidity).toBe(80);
     });
+
+    it('when air quality is missing the api should still show weather', async () => {
+        const fakeFetch = vi.fn()
+        .mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                current: {
+                    temperature_2m: 3.4,
+                    weather_code: 3,
+                    wind_speed_10m: 5.2,
+                    rain: 2.5,
+                    wind_direction_10m: 90,
+                    apparent_temperature: 5.2,
+                    relative_humidity_2m: 80,
+                },
+                daily: {
+                    time: [
+                        '2026-11-24',
+                        '2026-11-25',
+                        '2026-11-26',
+                        '2026-11-27',
+                        '2026-11-28',
+                        '2026-11-29',
+                        '2026-11-30',
+                    ],
+                    temperature_2m_max: [5, 6, 4, 5, 7, 8, 6],
+                    temperature_2m_min: [1, 2, 0, 1, 3, 4, 2],
+                    precipitation_sum: [0, 2, 0, 0, 0, 0, 0],
+                    rain_sum: [0, 2, 0, 0, 0, 0, 0],
+                    snowfall_sum: [0, 0, 0, 0, 0, 0, 0],
+                },
+            }),
+        })
+        .mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                current: {
+                },
+            }),
+        });
+
+        const testApp = createApp({ fetch: fakeFetch });
+
+        const response = await request(testApp).get('/api/weather');
+        const body = response.body;
+
+        expect(body.current).toEqual({ temperature: 3.4, weatherCode: 3 });
+        expect(body.windspeed).toBe(5.2);
+        expect(body.rain).toBe(2.5);
+        expect(body.winddirection).toBe('Ø');
+        expect(body.feelslike).toBe(5.2);
+        expect(body.week).toHaveLength(7);
+        expect(body.week[0]).toMatchObject({
+            date: '2026-11-24',
+            temperatureMin: 1,
+            temperatureMax: 5,
+            condition: 'clear',
+        });
+        expect(body.airquality).toBeUndefined();
+        expect(body.humidity).toBe(80);
+        expect(response.status).toBe(200);
+    })
 });

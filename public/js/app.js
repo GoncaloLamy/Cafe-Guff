@@ -47,7 +47,8 @@ function renderCurrentWeather(current) {
 }
 
 async function loadCurrentWeather() {
-    const errorMessage = document.getElementById('weather-error');
+    const conditionElement = document.getElementById('weather-condition')
+    
     try {
         const response = await fetch('/api/weather');
         if (!response.ok) {
@@ -57,8 +58,9 @@ async function loadCurrentWeather() {
         const weather = await response.json();
         renderCurrentWeather(weather.current);
     } catch {
-        errorMessage.textContent = 'Vejret kunne ikke hentes lige nu.';
-        errorMessage.hidden = false;
+        if (conditionElement) {
+            conditionElement.textContent = 'Vejret kunne ikke hentes lige nu.';
+        }
     }
 }
 
