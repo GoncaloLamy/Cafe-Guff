@@ -1,41 +1,3 @@
-function isValidDishIds(dishIds) {
-    return Array.isArray(dishIds) && dishIds.length > 0;
-}
-
-function isValidNotes(notes) {
-    return Array.isArray(notes)
-        && notes.every((note) => typeof note === 'string');
-}
-
-function hasMatchingNotes(dishIds, notes) {
-    return dishIds === undefined
-        || notes === undefined
-        || notes.length === dishIds.length;
-}
-
-function hasValidOptionalDishIds(dishIds) {
-    return dishIds === undefined || isValidDishIds(dishIds);
-}
-
-function hasValidOptionalNotes(notes) {
-    return notes === undefined || isValidNotes(notes);
-}
-
-function isValidCreateInput(tableNumber, dishIds, notes) {
-    return Number.isInteger(tableNumber)
-        && tableNumber > 0
-        && isValidDishIds(dishIds)
-        && (notes === undefined
-            || (isValidNotes(notes) && notes.length === dishIds.length));
-}
-
-function isValidUpdateInput(dishIds, notes) {
-    return (dishIds !== undefined || notes !== undefined)
-        && hasValidOptionalDishIds(dishIds)
-        && hasValidOptionalNotes(notes)
-        && hasMatchingNotes(dishIds, notes);
-}
-
 function formatOrder(order) {
     return {
         id: order.id,
@@ -65,11 +27,7 @@ function sendOrderError(res, result) {
 }
 
 async function createOrder(orderService, req, res) {
-    const { table, dishIds, notes } = req.body ?? {};
-    if (!isValidCreateInput(table, dishIds, notes)) {
-        return res.status(400).json({ error: 'Invalid order' });
-    }
-
+    const { table, dishIds, notes } = req.body;
     const order = await orderService.createOrder(table, dishIds, notes);
     if (!order) {
         return res.status(404).json({ error: 'Menu item not found' });
@@ -79,11 +37,7 @@ async function createOrder(orderService, req, res) {
 }
 
 async function updateOrder(orderService, req, res) {
-    const { dishIds, notes } = req.body ?? {};
-    if (!isValidUpdateInput(dishIds, notes)) {
-        return res.status(400).json({ error: 'Invalid order' });
-    }
-
+    const { dishIds, notes } = req.body;
     const result = await orderService.updateOrder(
         req.params.id,
         dishIds,
