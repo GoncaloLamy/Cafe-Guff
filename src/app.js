@@ -28,6 +28,9 @@ export function createApp({
     app.use(logger);
     app.use(express.json());
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')));
+    app.get('/health', (req, res) => {
+        res.status(200).json({ status: 'ok' });
+    });
     app.use('/api/menu', createMenuRouter(createMenuController(menuService)));
     app.use('/api/orders', createOrderRouter(createOrderController(orderService)));
     app.use('/api/weather', createWeatherRouter(createWeatherController(weatherService)));
