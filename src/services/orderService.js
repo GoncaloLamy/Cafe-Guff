@@ -1,4 +1,4 @@
-async function calculateTotal(dishIds, menuRepository) {
+export async function calculateTotal(dishIds, menuRepository) {
     const menuItems = await menuRepository.findAll();
     return dishIds.reduce((sum, dishId) => {
         const menuItem = menuItems.find((item) => String(item.id) === dishId);
@@ -23,7 +23,7 @@ async function createOrder(orderRepository, menuRepository, orderInput) {
     });
 }
 
-async function findActiveOrder(orderRepository, id) {
+export async function findActiveOrder(orderRepository, id) {
     const order = await orderRepository.findById(id);
     if (!order) {
         return { error: 'order-not-found' };
