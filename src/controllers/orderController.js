@@ -12,7 +12,21 @@ function formatOrder(order) {
         dishIds: order.dishIds,
         total: order.total,
         createdAt: order.createdAt,
+        paid: order.paid,
     };
+}
+
+function sendOrderError(res, result) {
+    if (result.error === 'order-not-found') {
+        return res.status(404).json({ error: 'Order not found' });
+    }
+    if (result.error === 'dish-not-found') {
+        return res.status(404).json({ error: 'Menu item not found' });
+    }
+    if (result.error === 'order-paid') {
+        return res.status(409).json({ error: 'Order already paid' });
+    }
+    return null;
 }
 
 export default function createOrderController(orderService) {
@@ -37,13 +51,18 @@ export default function createOrderController(orderService) {
             }
 
             const result = await orderService.updateOrder(req.params.id, dishIds);
-            if (result.error === 'order-not-found') {
-                return res.status(404).json({ error: 'Order not found' });
+            const errorResponse = sendOrderError(res, result);
+            if (errorResponse) {
+                return errorResponse;
             }
-            if (result.error === 'dish-not-found') {
-                return res.status(404).json({ error: 'Menu item not found' });
+            return res.status(200).json(formatOrder(result.order));
+        },
+        close: async (req, res) => {
+            const result = await orderService.closeOrder(req.params.id);
+            const errorResponse = sendOrderError(res, result);
+            if (errorResponse) {
+                return errorResponse;
             }
-
             return res.status(200).json(formatOrder(result.order));
         },
     };
