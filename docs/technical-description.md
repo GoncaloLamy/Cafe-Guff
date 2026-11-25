@@ -150,8 +150,8 @@ Testene ligger i `test/integration` og bruger supertest, så serveren ikke behø
 Postman collectionen ligger i `docs/postman`. Den dækker de stories, der er lavet, og kan køres uden Postman, mens serveren kører i en anden terminal:
 
 ```bash
-node src/server.js
-npx newman run "docs/postman/Cafe Guf API.postman_collection.json"
+npm start                # i den første terminal
+npm run postman         # i en anden terminal, mens serveren kører
 ```
 
 Vejr requests kræver internet, fordi de kalder det rigtige Open-Meteo.
