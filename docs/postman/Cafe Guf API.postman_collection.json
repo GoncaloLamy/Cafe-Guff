@@ -1508,7 +1508,7 @@
       ]
     },
     {
-      "name": "Story 8, weather",
+      "name": "Story 7, weather",
       "item": [
         {
           "name": "GET weather default location - 200 current and 7 day forecast",
