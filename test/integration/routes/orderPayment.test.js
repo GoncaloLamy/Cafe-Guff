@@ -193,9 +193,11 @@ describe('Story 16, split bill', () => {
             .post(`/api/orders/${order.body.id}/split`)
             .send({ bills: [[1], [2]] });
 
-        // Pay the first bill
+        const [firstBill, secondBill] = split.body.bills;
+
+        // Pay only the first bill
         await request(app)
-            .post(`/api/bills/${split.body.bills[0].id}/close`);
+            .post(`/api/bills/${firstBill.id}/close`);
 
         // Act
         const response = await request(app)
@@ -205,6 +207,13 @@ describe('Story 16, split bill', () => {
         // Assert
         expect(response.status).toBe(409);
         expect(response.body.error).toBe('Order already split');
+
+        // The second bill must still be unpaid
+        const bills = await request(app)
+            .get(`/api/orders/${order.body.id}/bills`);
+
+        const unpaid = bills.body.find((b) => b.id === secondBill.id);
+        expect(unpaid.paid).toBe(false);
     });
 
     it('closeBill_oneBill_doesNotCloseOtherBills', async () => {
@@ -230,7 +239,7 @@ describe('Story 16, split bill', () => {
         expect(secondResponse.body.paid).toBe(true);
     });
 
-    it('closeBill_unknownOrPaidBill_returns404Or409', async () => {
+    it('closeBill_unknownOrPaidBill_returns404', async () => {
         // Arrange
         const app = createApp();
         const order = await request(app)
@@ -248,5 +257,30 @@ describe('Story 16, split bill', () => {
 
         // Assert
         expect(missingResponse.status).toBe(404);
+    });
+    it('closeBill_alreadyPaidBill_returns409', async () => {
+        // Arrange
+        const app = createApp();
+
+        const order = await request(app)
+            .post('/api/orders')
+            .send({ table: 3, dishIds: [1, 2] });
+
+        const split = await request(app)
+            .post(`/api/orders/${order.body.id}/split`)
+            .send({ bills: [[1], [2]] });
+
+        const billId = split.body.bills[0].id;
+
+        // Pay the bill once
+        await request(app)
+            .post(`/api/bills/${billId}/close`);
+
+        // Act
+        const response = await request(app)
+            .post(`/api/bills/${billId}/close`);
+
+        // Assert
+        expect(response.status).toBe(409);
     });
 })
