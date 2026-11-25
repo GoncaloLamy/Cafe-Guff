@@ -29,6 +29,58 @@ function sendOrderError(res, result) {
     return null;
 }
 
+function isValidBills(bills) {
+    return Array.isArray(bills)
+        && bills.length >= 2
+        && bills.every((bill) => Array.isArray(bill) && bill.length > 0);
+}
+
+async function splitOrder(orderService, req, res) {
+    const { bills } = req.body ?? {};
+    if (!isValidBills(bills)) {
+        return res.status(400).json({ error: 'Invalid bills' });
+    }
+
+    const result = await orderService.splitOrder(req.params.id, bills);
+    if (result.error === 'invalid-split') {
+        return res.status(400).json({ error: 'Invalid bills' });
+    }
+
+    const errorResponse = sendOrderError(res, result);
+    if (errorResponse) {
+        return errorResponse;
+    }
+
+    return res.status(201).json({
+        bills: result.bills.map((bill) => ({
+            id: bill.id,
+            table: bill.tableNumber,
+            dishIds: bill.dishIds,
+            price: bill.price,
+            paid: bill.paid,
+        })),
+    });
+}
+
+async function closeBill(orderService, req, res) {
+    const result = await orderService.closeBill(req.params.billId);
+    if (result.error === 'bill-not-found') {
+        return res.status(404).json({ error: 'Bill not found' });
+    }
+    if (result.error === 'bill-paid') {
+        return res.status(409).json({ error: 'Bill already paid' });
+    }
+
+    const { bill } = result;
+    return res.status(200).json({
+        id: bill.id,
+        table: bill.tableNumber,
+        dishIds: bill.dishIds,
+        price: bill.price,
+        paid: bill.paid,
+    });
+}
+
 export default function createOrderController(orderService) {
     return {
         create: async (req, res) => {
@@ -65,5 +117,7 @@ export default function createOrderController(orderService) {
             }
             return res.status(200).json(formatOrder(result.order));
         },
+        split: (req, res) => splitOrder(orderService, req, res),
+        closeBill: (req, res) => closeBill(orderService, req, res),
     };
 }

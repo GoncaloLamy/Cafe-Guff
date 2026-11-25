@@ -29,7 +29,7 @@ export function createApp({
     app.use(express.json());
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')));
     app.use('/api/menu', createMenuRouter(createMenuController(menuService)));
-    app.use('/api/orders', createOrderRouter(createOrderController(orderService)));
+    app.use('/api', createOrderRouter(createOrderController(orderService)));
     app.use('/api/weather', createWeatherRouter(createWeatherController(weatherService)));
     app.use(notFound);
     app.use(errorHandler);

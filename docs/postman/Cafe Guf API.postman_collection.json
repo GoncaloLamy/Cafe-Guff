@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "4129a338-c90d-4e91-8f1c-ef8fbc7927a0",
+    "_postman_id": "f341e362-f5b9-4aac-b106-d38b07322dae",
     "name": "Cafe Guf API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "58677528",
-    "_collection_link": "https://go.postman.co/collection/58677528-4129a338-c90d-4e91-8f1c-ef8fbc7927a0?source=collection_link"
+    "_exporter_id": "60399796",
+    "_collection_link": "https://go.postman.co/collection/60399796-f341e362-f5b9-4aac-b106-d38b07322dae?source=collection_link"
   },
   "item": [
     {
@@ -921,6 +921,289 @@
                 "api",
                 "orders",
                 "999",
+                "close"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Story 6, notes",
+      "item": [
+        {
+          "name": "POST create order with note",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"table\": 3,\r\n    \"dishIds\": [1, 2],\r\n    \"notes\": [\"No onions\", \"Extra cheese\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST create order without note",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"table\": 3,\r\n    \"dishIds\": [1, 2],\r\n    \"notes\": [\"\", \"\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH updates notes in order",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"notes\": [\"\", \"Extra cheese\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST create order with wrong note lenght",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"table\": 3,\r\n    \"dishIds\": [1, 2],\r\n    \"notes\": [\"No onions\", \"Extra cheese\", \"No pickles\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Story 16, split bill",
+      "item": [
+        {
+          "name": "POST split order into seperate bills and returns same table number",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bills\": [\r\n        [1],\r\n        [2]\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders/1/split",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders",
+                "1",
+                "split"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST dish doesnt belong in order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bills\": [\r\n        [1],\r\n        [2, 99]\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders/1/split",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders",
+                "1",
+                "split"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST empty bills",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bills\": []\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/orders/1/split",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "orders",
+                "1",
+                "split"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST pay bill",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"paid\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/bills/1/close",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "bills",
+                "1",
+                "close"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST cant pay same bill twice",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"paid\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/bills/1/close",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "bills",
+                "1",
                 "close"
               ]
             }
