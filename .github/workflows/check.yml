@@ -16,3 +16,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: Postman mod kørende server
+        run: |
+          npm start &
+          npx --yes wait-on http-get://localhost:3000/api/menu --timeout 30000
+          npm run postman
