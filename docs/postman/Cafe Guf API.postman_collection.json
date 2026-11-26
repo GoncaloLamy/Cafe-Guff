@@ -1508,6 +1508,175 @@
       ]
     },
     {
+      "name": "Story 9, kitchen",
+      "item": [
+        {
+          "name": "POST send order - 200 status new",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var baseUrl = pm.variables.replaceIn('{{baseUrl}}');",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + '/api/orders',",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({ table: 5, dishIds: [1, 2], notes: ['no onions', ''] })",
+                  "    }",
+                  "}, function (err, res) {",
+                  "    pm.expect(err).to.equal(null);",
+                  "    pm.collectionVariables.set('kitchenOrderId', res.json().id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Order has status new', function () {",
+                  "    pm.expect(pm.response.json().status).to.equal('new');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{kitchenOrderId}}/send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{kitchenOrderId}}",
+                "send"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST send same order twice - 409",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{kitchenOrderId}}/send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{kitchenOrderId}}",
+                "send"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST send order id 999 - 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/999/send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "999",
+                "send"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET kitchen orders - 200 list contains sent order with table and notes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('List contains the sent order with table, notes and status new', function () {",
+                  "    var json = pm.response.json();",
+                  "    var id = String(pm.collectionVariables.get('kitchenOrderId'));",
+                  "    var order = json.find(function (item) { return String(item.id) === id; });",
+                  "    pm.expect(order).to.not.equal(undefined);",
+                  "    pm.expect(order.table).to.equal(5);",
+                  "    pm.expect(order).to.have.property('notes');",
+                  "    pm.expect(order.status).to.equal('new');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/kitchen/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "kitchen",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Story 7, weather",
       "item": [
         {
