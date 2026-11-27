@@ -131,9 +131,11 @@ describe('Auth Router', () => {
 
         });
 
+
         expect(response2.status).toBe(409);
         expect(response2.body.message).toBe('Invalid credentials, already exists!');
     })
 
  //needs a test for cant be letters
+    //test
 })
