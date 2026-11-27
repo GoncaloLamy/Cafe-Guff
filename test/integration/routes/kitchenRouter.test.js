@@ -17,6 +17,7 @@ async function createSentOrder(app) {
 
 async function createReadyOrder(app) {
     const orderId = await createSentOrder(app);
+    await request(app).post(`/api/kitchen/orders/${orderId}/start`);
     await request(app).post(`/api/kitchen/orders/${orderId}/ready`);
     return orderId;
 }
