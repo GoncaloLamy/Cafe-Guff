@@ -113,7 +113,12 @@ describe('Auth Router', () => {
     })
 
     it('Every waiter and admin should have a unique code', async () => {
-        const response = await request(app).post('/api/register').send({
+        const agent = request.agent(app);
+        const response3 = await agent.post('/api/login').send(credentials);
+        expect(response3.status).toBe(200);
+        expect(response3.body.message).toBe('Login successful');
+
+        const response = await agent.post('/api/register').send({
             ...credentials,
             role: 'waiter',
             accessCode: '9876'
@@ -124,7 +129,7 @@ describe('Auth Router', () => {
         expect(response.body.role).toBe('waiter');
         expect(response.body.message).toBe('Registration successful');
 
-        const response2 = await request(app).post('/api/register').send({
+        const response2 = await agent.post('/api/register').send({
             ...credentials,
             role: 'waiter',
             accessCode: '9876'
@@ -137,7 +142,11 @@ describe('Auth Router', () => {
     })
 
     it('should return a 400 status code when entered code is letters', async () => {
-        const response = await request(app).post('/api/register').send({...credentials, accessCode: 'abcd'});
+        const agent = request.agent(app);
+        const loginResponse = await agent.post('/api/login').send(credentials);
+        expect(loginResponse.status).toBe(200);
+
+        const response = await agent.post('/api/register').send({...credentials, accessCode: 'abcd'});
 
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('Access code must be 4 digits long');
