@@ -61,11 +61,19 @@ function findSent(orders, sentOrderIds) {
         .filter((order) => order !== undefined);
 }
 
+function updateOrderStatus(orders, id, status) {
+    const order = orders.find((item) => item.id === String(id));
+    if (!order) return null;
+    order.status = status;
+    return order;
+}
+
 function createKitchenOrderMethods(orders) {
     const sentOrderIds = [];
     return {
         send: async (id) => sendOrder(orders, sentOrderIds, id),
         findSent: async () => findSent(orders, sentOrderIds),
+        updateStatus: async (id, status) => updateOrderStatus(orders, id, status),
     };
 }
 

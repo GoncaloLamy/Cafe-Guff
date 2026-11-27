@@ -15,6 +15,12 @@ async function createSentOrder(app) {
     return orderId;
 }
 
+async function createReadyOrder(app) {
+    const orderId = await createSentOrder(app);
+    await request(app).post(`/api/kitchen/orders/${orderId}/ready`);
+    return orderId;
+}
+
 describe('Story 9, Køkkenet', () => {
     it('sendOrder_newOrder_returns200AndStatusNew', async () => {
         // Arrange
@@ -130,3 +136,68 @@ describe('Story 9, Køkkenet', () => {
         expect(res.status).toBe(404);
     });
 });
+describe("Story 10, Status on order", () => {
+    it('startOrder_sentOrder_returns200AndStatusInProgress', async () => {
+        // Arrange
+        const app = createApp();
+        const orderId = await createSentOrder(app);
+
+        // Act
+        const res = await request(app).post(`/api/kitchen/orders/${orderId}/start`);
+
+        // Assert
+        expect(res.status).toBe(200);
+        expect(res.body.status).toBe('in_progress');
+    });
+    it('startOrder_orderAlreadyInProgress_returns409', async () => {
+        // Arrange
+        const app = createApp();
+        const orderId = await createSentOrder(app);
+        await request(app).post(`/api/kitchen/orders/${orderId}/start`);
+
+        // Act
+        const res = await request(app).post(`/api/kitchen/orders/${orderId}/start`);
+
+        // Assert
+        expect(res.status).toBe(409);
+        expect(res.body.error).toBe('Order is already in progress.');
+    });
+    it('markOrderReady_orderInProgress_returns200AndStatusReady', async () => {
+        // Arrange
+        const app = createApp();
+        const orderId = await createSentOrder(app);
+        await request(app).post(`/api/kitchen/orders/${orderId}/start`);
+
+        // Act
+        const res = await request(app).post(`/api/kitchen/orders/${orderId}/ready`);
+
+        // Assert
+        expect(res.status).toBe(200);
+        expect(res.body.status).toBe('ready');
+    });
+    it('markOrderReady_orderNotStarted_returns409', async () => {
+        // Arrange
+        const app = createApp();
+        const orderId = await createSentOrder(app);
+
+        // Act
+        const res = await request(app).post(`/api/kitchen/orders/${orderId}/ready`);
+
+        // Assert
+        expect(res.status).toBe(409);
+        expect(res.body.error).toBe("Order can't be marked ready because it hasn't been started.");
+    });
+    it('markOrderReady_orderAlreadyReady_returns409', async () => {
+        // Arrange
+        const app = createApp();
+        const orderId = await createReadyOrder(app);
+
+        // Act
+        const res = await request(app).post(`/api/kitchen/orders/${orderId}/ready`);
+
+        // Assert
+        expect(res.status).toBe(409);
+        expect(res.body.error).toBe('Order is already marked as ready.');
+    });
+
+})

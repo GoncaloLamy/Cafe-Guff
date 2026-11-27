@@ -13,6 +13,7 @@ import createWeatherRouter from './routes/weatherRouter.js';
 import createMenuService from './services/menuService.js';
 import createBillService from './services/billService.js';
 import createOrderService from './services/orderService.js';
+import createKitchenService from './services/kitchenService.js';
 import createWeatherController from './controllers/weatherController.js';
 import createWeatherService from './services/weatherService.js';
 
@@ -24,6 +25,7 @@ export function createApp({
     const app = express();
     const menuService = createMenuService(menuRepository);
     const orderService = createOrderService(orderRepository, menuRepository);
+    const kitchenService = createKitchenService(orderRepository);
     const billService = createBillService(orderRepository, menuRepository);
     const weatherService = createWeatherService(fetch);
 
@@ -34,7 +36,9 @@ export function createApp({
         res.status(200).json({ status: 'ok' });
     });
     app.use('/api/menu', createMenuRouter(createMenuController(menuService)));
-    app.use('/api', createOrderRouter(createOrderController(orderService, billService)));
+    app.use('/api', createOrderRouter(
+        createOrderController(orderService, billService, kitchenService),
+    ));
     app.use('/api/weather', createWeatherRouter(createWeatherController(weatherService)));
     app.get('/weather', (req, res) => res.sendFile(path.join(import.meta.dirname, '..', 'public', 'weather.html')));
     app.use(notFound);

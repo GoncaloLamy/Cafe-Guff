@@ -2,14 +2,8 @@ import { isValidBills } from '../middleware/validateOrderInput.js';
 
 function formatOrder(order) {
     return {
-        id: order.id,
-        table: order.tableNumber,
-        dishIds: order.dishIds,
-        notes: order.notes,
-        total: order.total,
-        createdAt: order.createdAt,
-        paid: order.paid,
-        status: order.status,
+        id: order.id, table: order.tableNumber, dishIds: order.dishIds, notes: order.notes,
+        total: order.total, createdAt: order.createdAt, paid: order.paid, status: order.status,
     };
 }
 
@@ -31,9 +25,7 @@ function sendOrderError(res, result) {
 async function createOrder(orderService, req, res) {
     const { table, dishIds, notes } = req.body;
     const order = await orderService.createOrder(table, dishIds, notes);
-    if (!order) {
-        return res.status(404).json({ error: 'Menu item not found' });
-    }
+    if (!order) return res.status(404).json({ error: 'Menu item not found' });
 
     return res.status(201).json(formatOrder(order));
 }
@@ -49,17 +41,26 @@ async function getKitchenOrders(orderService, res) {
     return res.status(200).json(orders.map((order) => formatOrder(order)));
 }
 
+const kitchenStatusErrors = {
+    'order-not-found': { status: 404, message: 'Order not found' },
+    'order-status-conflict': { status: 409, message: 'Order status conflict' },
+    'order-already-in-progress': { status: 409, message: 'Order is already in progress.' },
+    'order-not-started': { status: 409, message: "Order can't be marked ready because it hasn't been started." },
+    'order-already-ready': { status: 409, message: 'Order is already marked as ready.' },
+};
+
+async function updateKitchenOrder(serviceMethod, req, res) {
+    const result = await serviceMethod(req.params.id);
+    const error = kitchenStatusErrors[result.error];
+    if (error) return res.status(error.status).json({ error: error.message });
+    return res.status(200).json(formatOrder(result.order));
+}
+
 async function updateOrder(orderService, req, res) {
     const { dishIds, notes } = req.body;
-    const result = await orderService.updateOrder(
-        req.params.id,
-        dishIds,
-        notes,
-    );
+    const result = await orderService.updateOrder(req.params.id, dishIds, notes);
     const errorResponse = sendOrderError(res, result);
-    if (errorResponse) {
-        return errorResponse;
-    }
+    if (errorResponse) return errorResponse;
     return res.status(200).json(formatOrder(result.order));
 }
 
@@ -121,11 +122,13 @@ async function closeBill(billService, req, res) {
     });
 }
 
-export default function createOrderController(orderService, billService) {
+export default function createOrderController(orderService, billService, kitchenService) {
     return {
         create: (req, res) => createOrder(orderService, req, res),
         send: (req, res) => sendOrder(orderService, req, res),
         kitchenOrders: (req, res) => getKitchenOrders(orderService, res),
+        start: (req, res) => updateKitchenOrder(kitchenService.startOrder, req, res),
+        ready: (req, res) => updateKitchenOrder(kitchenService.markReady, req, res),
         update: (req, res) => updateOrder(orderService, req, res),
         close: (req, res) => closeOrder(orderService, req, res),
         split: (req, res) => splitOrder(billService, req, res),
