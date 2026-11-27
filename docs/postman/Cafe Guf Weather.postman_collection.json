@@ -1,0 +1,173 @@
+{
+  "info": {
+    "_postman_id": "3f984c6f-3093-4f66-9ffd-349891a7cd18",
+    "name": "Cafe Guf API, weather",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "60399796",
+    "_collection_link": "https://go.postman.co/collection/60399796-f341e362-f5b9-4aac-b106-d38b07322dae?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Story 7, weather",
+      "item": [
+        {
+          "name": "GET weather default location - 200 current and 7 day forecast",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has current weather and a 7 day forecast', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.current.temperature).to.be.a('number');",
+                  "    pm.expect(json.windspeed).to.be.a('number');",
+                  "    pm.expect(json.humidity).to.be.a('number');",
+                  "    pm.expect(json.winddirection).to.be.a('string');",
+                  "    pm.expect(json.week).to.have.length(7);",
+                  "    pm.expect(json.week[0]).to.have.all.keys('date', 'temperatureMin', 'temperatureMax', 'condition');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "weather"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET weather Naestved coordinates - 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has current weather and a 7 day forecast', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.current.temperature).to.be.a('number');",
+                  "    pm.expect(json.windspeed).to.be.a('number');",
+                  "    pm.expect(json.humidity).to.be.a('number');",
+                  "    pm.expect(json.winddirection).to.be.a('string');",
+                  "    pm.expect(json.week).to.have.length(7);",
+                  "    pm.expect(json.week[0]).to.have.all.keys('date', 'temperatureMin', 'temperatureMax', 'condition');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?latitude=55.2299&longitude=11.7609",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "55.2299"
+                },
+                {
+                  "key": "longitude",
+                  "value": "11.7609"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET weather invalid coordinates - 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Response has error field', function () {",
+                  "    pm.expect(pm.response.json().error).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?latitude=abc&longitude=12.5439",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "abc"
+                },
+                {
+                  "key": "longitude",
+                  "value": "12.5439"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "splitOrderId",
+      "value": ""
+    },
+    {
+      "key": "freshOrderId",
+      "value": ""
+    },
+    {
+      "key": "billId",
+      "value": ""
+    }
+  ]
+}

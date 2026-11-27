@@ -129,4 +129,20 @@ describe('Story 9, Køkkenet', () => {
         // Assert
         expect(res.status).toBe(404);
     });
+
+    it('sendOrder_twoSimultaneousRequests_oneSucceedsOneConflicts', async () => {
+        // Arrange
+        const app = createApp();
+        const orderId = await createOrder(app);
+
+        // Act
+        const responses = await Promise.all([
+            request(app).post(`/api/orders/${orderId}/send`),
+            request(app).post(`/api/orders/${orderId}/send`),
+        ]);
+
+        // Assert
+        const statuses = responses.map((res) => res.status).sort((a, b) => a - b);
+        expect(statuses).toEqual([200, 409]);
+    });
 });
