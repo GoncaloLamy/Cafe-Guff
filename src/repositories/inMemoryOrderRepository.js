@@ -40,6 +40,35 @@ function createOrder(id, { tableNumber, dishIds, notes, total, createdAt }) {
     };
 }
 
+function sendOrder(orders, sentOrderIds, id) {
+    const order = orders.find((item) => item.id === String(id));
+    if (!order) {
+        return null;
+    }
+
+    if (sentOrderIds.includes(order.id)) {
+        return { error: 'order-already-sent' };
+    }
+
+    sentOrderIds.push(order.id);
+    order.status = 'new'
+    return order;
+}
+
+function findSent(orders, sentOrderIds) {
+    return sentOrderIds
+        .map((id) => orders.find((order) => order.id === id))
+        .filter((order) => order !== undefined);
+}
+
+function createKitchenOrderMethods(orders) {
+    const sentOrderIds = [];
+    return {
+        send: async (id) => sendOrder(orders, sentOrderIds, id),
+        findSent: async () => findSent(orders, sentOrderIds),
+    };
+}
+
 export default function createInMemoryOrderRepository() {
     const orders = [];
     let nextId = 1;
@@ -53,6 +82,7 @@ export default function createInMemoryOrderRepository() {
             return order;
         },
         findById: async (id) => orders.find((order) => order.id === String(id)) ?? null,
+        ...createKitchenOrderMethods(orders),
         findBillById: async (id) => findBill(orders, id),
         update: async (id, { dishIds, notes, total }) => {
             const order = orders.find((item) => item.id === String(id));

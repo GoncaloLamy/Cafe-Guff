@@ -23,6 +23,21 @@ async function createOrder(orderRepository, menuRepository, orderInput) {
     });
 }
 
+async function sendOrder(orderRepository, id) {
+    const order = await orderRepository.send(id);
+    if (!order) {
+        return { error: 'order-not-found' };
+    }
+    if (order.error) {
+        return order;
+    }
+    return { order };
+}
+
+async function getKitchenOrders(orderRepository) {
+    return orderRepository.findSent();
+}
+
 export async function findActiveOrder(orderRepository, id) {
     const order = await orderRepository.findById(id);
     if (!order) {
@@ -105,6 +120,8 @@ export default function createOrderService(orderRepository, menuRepository) {
                 dishIds,
                 notes,
             }),
+        sendOrder: (id) => sendOrder(orderRepository, id),
+        getKitchenOrders: () => getKitchenOrders(orderRepository),
         updateOrder: (id, dishIds, notes) =>
             updateOrder(orderRepository, menuRepository, {
                 id,
