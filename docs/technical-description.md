@@ -154,6 +154,7 @@ Postman collectionen ligger i `docs/postman`. Den dækker de stories, der er lav
 ```bash
 npm start                # i den første terminal
 npm run postman         # i en anden terminal, mens serveren kører
+npm run postman:weather  # vejr, kalder Open-Meteo udefra
 ```
 
 Vejr requests kræver internet, fordi de kalder det rigtige Open-Meteo.

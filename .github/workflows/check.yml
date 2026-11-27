@@ -21,3 +21,4 @@ jobs:
           npm start &
           npx --yes wait-on http-get://localhost:3000/api/menu --timeout 30000
           npm run postman
+          npm run postman:weather || echo "::warning::Vejr Postman fejlede, tjek om Open-Meteo svarer"

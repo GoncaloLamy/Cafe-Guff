@@ -12,7 +12,8 @@
     "test": "vitest run",
     "lint": "eslint .",
     "check": "npm test && npm run lint",
-    "postman": "npx --yes newman run \"docs/postman/Cafe Guf API.postman_collection.json\""
+    "postman": "npx --yes newman run \"docs/postman/Cafe Guf API.postman_collection.json\"",
+    "postman:weather": "npx --yes newman run \"docs/postman/Cafe Guf Weather.postman_collection.json\""
   },
   "repository": {
     "type": "git",
