@@ -12,6 +12,8 @@ export default function createOrderRouter(controller) {
     router.post('/orders/:id/split', controller.split);
     router.patch('/orders/:id', validateUpdateOrderInput, controller.update);
     router.get('/kitchen/orders', controller.kitchenOrders);
+    router.post('/kitchen/orders/:id/start', controller.start);
+    router.post('/kitchen/orders/:id/ready', controller.ready);
     router.post('/bills/:billId/close', controller.closeBill);
     return router;
 }
