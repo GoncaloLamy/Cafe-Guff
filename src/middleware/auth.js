@@ -13,7 +13,7 @@ export function createRequireAuth(authService) {
     return (req, res, next) => {
         const role = authService.getSession(getToken(req));
         if (!role) {
-            if (req.path === '/' || req.path === '/index.html') {
+            if (['/', '/index.html', '/weather', '/weather.html'].includes(req.path)) {
                 return res.redirect(302, '/login');
             }
             return res.status(401).json({ message: 'Not logged in' });

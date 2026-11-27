@@ -33,6 +33,22 @@ function registerLoginPageRoutes(app) {
     });
 }
 
+function registerFrontendPageRoutes(app, authEnabled, requireAuth) {
+    const pageAuth = getAuthMiddleware(authEnabled, requireAuth);
+    app.get('/', ...pageAuth, (req, res) => {
+        res.sendFile(path.join(import.meta.dirname, '..', 'public', 'index.html'));
+    });
+    app.get('/index.html', ...pageAuth, (req, res) => {
+        res.sendFile(path.join(import.meta.dirname, '..', 'public', 'index.html'));
+    });
+    app.get('/weather', ...pageAuth, (req, res) => {
+        res.sendFile(path.join(import.meta.dirname, '..', 'public', 'weather.html'));
+    });
+    app.get('/weather.html', ...pageAuth, (req, res) => {
+        res.sendFile(path.join(import.meta.dirname, '..', 'public', 'weather.html'));
+    });
+}
+
 export function createApp({
                               menuRepository = createInMemoryMenuRepository(),
                               orderRepository = createInMemoryOrderRepository(),
@@ -46,24 +62,17 @@ export function createApp({
     const weatherService = createWeatherService(fetch);
     const authService = createAuthService();
     const requireAuth = createRequireAuth(authService);
+    const requireAdmin = createRequireRole('admin');
 
     app.use(logger);
     app.use(express.json());
     app.get('/health', (req, res) => {
         res.status(200).json({ status: 'ok' });
     });
-    app.use('/api', createAuthRouter(createAuthController(authService)));
+    app.use('/api', createAuthRouter(createAuthController(authService), requireAuth, requireAdmin));
     registerLoginPageRoutes(app);
-    app.get('/', ...getAuthMiddleware(authEnabled, requireAuth), (req, res) => {
-        res.sendFile(path.join(import.meta.dirname, '..', 'public', 'index.html'));
-    });
-    app.get('/index.html', ...getAuthMiddleware(authEnabled, requireAuth), (req, res) => {
-        res.sendFile(path.join(import.meta.dirname, '..', 'public', 'index.html'));
-    });
-    app.get('/weather', (req, res) => {
-        res.sendFile(path.join(import.meta.dirname, '..', 'public', 'weather.html'));
-    });
-    app.get('/admin-only-route', requireAuth, createRequireRole('admin'), (req, res) => {
+    registerFrontendPageRoutes(app, authEnabled, requireAuth);
+    app.get('/admin-only-route', requireAuth, requireAdmin, (req, res) => {
         res.status(200).json({ message: 'Access granted' });
     });
     app.use('/api/menu', createMenuRouter(createMenuController(menuService)));
