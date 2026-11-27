@@ -7,6 +7,7 @@ function startServer() {
     const app = createApp({
         menuRepository: createInMemoryMenuRepository(),
         orderRepository: createInMemoryOrderRepository(),
+        authEnabled: true,
     });
 
     app.listen(port);

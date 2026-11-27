@@ -9,6 +9,7 @@
     <header>
         <a href="/">Tilbage til Café Guf</a>
         <h1>Vejrudsigt</h1>
+        <p>Logget ind som: <span id="current-role">Indlæser...</span></p>
     </header>
     <main>
         <section aria-labelledby="current-weather-heading">
@@ -26,6 +27,7 @@
         </section>
         <p id="weather-error" role="alert" hidden></p>
     </main>
+    <script src="/js/session.js" defer></script>
     <script type="module" src="/js/weather.js"></script>
 </body>
 </html>

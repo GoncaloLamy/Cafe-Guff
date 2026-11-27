@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log ind - Café Guf</title>
+</head>
+<body>
+    <main>
+        <h1>Log ind</h1>
+        <form id="login-form">
+            <label for="access-code">Pinkode</label>
+            <input id="access-code" name="accessCode" type="text" inputmode="numeric"
+                   minlength="4" maxlength="4" autocomplete="current-password" required>
+            <button type="submit">Log ind</button>
+            <p id="login-error" role="alert"></p>
+        </form>
+    </main>
+    <script src="/js/login.js" defer></script>
+</body>
+</html>
