@@ -9,6 +9,7 @@ function formatOrder(order) {
         total: order.total,
         createdAt: order.createdAt,
         paid: order.paid,
+        status: order.status,
     };
 }
 
@@ -19,9 +20,8 @@ function sendOrderError(res, result) {
     if (result.error === 'dish-not-found') {
         return res.status(404).json({ error: 'Menu item not found' });
     }
-    if (result.error === 'order-paid') {
-        return res.status(409).json({ error: 'Order already paid' });
-    }
+    if (result.error === 'order-paid') return res.status(409).json({ error: 'Order already paid' });
+    if (result.error === 'order-already-sent') return res.status(409).json({ error: 'Order already sent' });
     if (result.error === 'invalid-order') {
         return res.status(400).json({ error: 'Invalid order' });
     }
@@ -36,6 +36,17 @@ async function createOrder(orderService, req, res) {
     }
 
     return res.status(201).json(formatOrder(order));
+}
+
+async function sendOrder(orderService, req, res) {
+    const result = await orderService.sendOrder(req.params.id);
+    if (result.error) return sendOrderError(res, result);
+    return res.status(200).json(formatOrder(result.order));
+}
+
+async function getKitchenOrders(orderService, res) {
+    const orders = await orderService.getKitchenOrders();
+    return res.status(200).json(orders.map((order) => formatOrder(order)));
 }
 
 async function updateOrder(orderService, req, res) {
@@ -113,6 +124,8 @@ async function closeBill(billService, req, res) {
 export default function createOrderController(orderService, billService) {
     return {
         create: (req, res) => createOrder(orderService, req, res),
+        send: (req, res) => sendOrder(orderService, req, res),
+        kitchenOrders: (req, res) => getKitchenOrders(orderService, res),
         update: (req, res) => updateOrder(orderService, req, res),
         close: (req, res) => closeOrder(orderService, req, res),
         split: (req, res) => splitOrder(billService, req, res),

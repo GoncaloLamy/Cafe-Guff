@@ -71,10 +71,12 @@ Rækkefølgen af middleware i `createApp` er: `logger`, `express.json()`, statis
 | GET | `/health` | Tjekker at serveren kører | 200 |
 | GET | `/api/menu` | Hele menuen med navn, pris og allergener | 200 |
 | POST | `/api/orders` | Opretter en bestilling til et bord | 201, 400, 404 |
+| POST | `/api/orders/:id/send` | Sender bestillingen til køkkenet | 200, 404, 409 |
 | PATCH | `/api/orders/:id` | Ændrer retter eller noter i en bestilling | 200, 400, 404, 409 |
 | POST | `/api/orders/:id/close` | Markerer bestillingen som betalt | 200, 404, 409 |
 | POST | `/api/orders/:id/split` | Deler regningen op i flere regninger | 201, 400, 404, 409 |
 | POST | `/api/bills/:billId/close` | Markerer én regning som betalt | 200, 404, 409 |
+| GET | `/api/kitchen/orders` | Køkkenets liste over sendte bestillinger, i den rækkefølge de blev sendt | 200 |
 | GET | `/api/weather` | Aktuelt vejr og prognose for 7 dage | 200, 400, 500 |
 
 Eksempel på at oprette en bestilling:
