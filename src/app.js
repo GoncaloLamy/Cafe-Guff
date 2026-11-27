@@ -14,6 +14,7 @@ import createWeatherRouter from './routes/weatherRouter.js';
 import createMenuService from './services/menuService.js';
 import createBillService from './services/billService.js';
 import createOrderService from './services/orderService.js';
+import createKitchenService from './services/kitchenService.js';
 import createWeatherController from './controllers/weatherController.js';
 import createWeatherService from './services/weatherService.js';
 import createAuthService from './services/authService.js';
@@ -58,6 +59,7 @@ export function createApp({
     const app = express();
     const menuService = createMenuService(menuRepository);
     const orderService = createOrderService(orderRepository, menuRepository);
+    const kitchenService = createKitchenService(orderRepository);
     const billService = createBillService(orderRepository, menuRepository);
     const weatherService = createWeatherService(fetch);
     const authService = createAuthService();
@@ -76,7 +78,9 @@ export function createApp({
         res.status(200).json({ message: 'Access granted' });
     });
     app.use('/api/menu', createMenuRouter(createMenuController(menuService)));
-    app.use('/api', createOrderRouter(createOrderController(orderService, billService)));
+    app.use('/api', createOrderRouter(
+        createOrderController(orderService, billService, kitchenService),
+    ));
     app.use('/api/weather', createWeatherRouter(createWeatherController(weatherService)));
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')));
     app.use(notFound);
