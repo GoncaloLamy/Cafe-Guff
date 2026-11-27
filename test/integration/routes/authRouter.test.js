@@ -108,7 +108,7 @@ describe('Auth Router', () => {
         const response = await request(app).get('/');
 
         expect(response.status).toBe(302);
-        expect(response.headers.location).toBe('/login.html');
+        expect(response.headers.location).toBe('/login');
 
     })
 
@@ -136,6 +136,10 @@ describe('Auth Router', () => {
         expect(response2.body.message).toBe('Invalid credentials, already exists!');
     })
 
- //needs a test for cant be letters
-    //test
+    it('should return a 400 status code when entered code is letters', async () => {
+        const response = await request(app).post('/api/register').send({...credentials, accessCode: 'abcd'});
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('Access code must be 4 digits long');
+    })
 })

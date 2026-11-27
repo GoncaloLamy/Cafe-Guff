@@ -64,4 +64,22 @@ async function loadCurrentWeather() {
     }
 }
 
+async function logout() {
+    const errorElement = document.getElementById('logout-error');
+    errorElement.textContent = '';
+
+    try {
+        const response = await fetch('/api/logout', { method: 'POST' });
+        if (!response.ok) {
+            errorElement.textContent = 'Du kunne ikke logges ud. Prøv igen.';
+            return;
+        }
+
+        window.location.assign('/login');
+    } catch {
+        errorElement.textContent = 'Der opstod en fejl under logout. Prøv igen.';
+    }
+}
+
+document.getElementById('logout-button').addEventListener('click', logout);
 loadCurrentWeather();

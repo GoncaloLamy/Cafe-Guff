@@ -164,6 +164,7 @@ describe('Weather Frontend-testing', () => {
         const response = await request(testApp).get('/');
 
         expect(response.status).toBe(200);
+        expect(response.text).toContain('id="logout-button"');
         expect(response.text).toMatch(/<a[^>]*href="\/weather"[^>]*>/);
         expect(response.text).toContain('id="weather-condition"');
         expect(response.text).toContain('id="weather-temperature"');
